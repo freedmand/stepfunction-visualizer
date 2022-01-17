@@ -1,0 +1,10 @@
+node_modules
+/build
+/.svelte-kit
+/package
+.*
+!.env.example
+!.gitignore
+!.eslintrc.cjs
+!.npmrc
+!.prettierrc
