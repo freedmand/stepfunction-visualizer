@@ -29,6 +29,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-sfn": "^3.47.0",
     "@types/mermaid": "^8.2.7",
     "mermaid": "^8.13.9"
   }
