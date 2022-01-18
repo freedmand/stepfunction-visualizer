@@ -1,23 +1,23 @@
 import type { RequestHandler } from '@sveltejs/kit/types/endpoint';
-import { execSync } from 'child_process';
+import { SFN } from '@aws-sdk/client-sfn';
+
+const sfn = new SFN({
+	endpoint: process.env.AWS_ENDPOINT ?? 'http://localhost:8083'
+});
 
 export const get: RequestHandler = async ({ params }) => {
 	const arn = params.arn;
 	const executionArn = params.execution;
-	const definition = execSync(
-		`aws stepfunctions --endpoint http://localhost:8083 --output json describe-state-machine --state-machine-arn ${arn}`
-	);
-	const execution = execSync(
-		`aws stepfunctions --endpoint http://localhost:8083 --output json describe-execution --execution-arn ${executionArn}`
-	);
-	const history = execSync(
-		`aws stepfunctions --endpoint http://localhost:8083 --output json get-execution-history --execution-arn ${executionArn}`
-	);
+	const definition = await sfn.describeStateMachine({ stateMachineArn: arn });
+	const execution = await sfn.describeExecution({ executionArn });
+	const history = await sfn.getExecutionHistory({
+		executionArn
+	});
 	return {
 		body: {
-			definition: JSON.parse(definition.toString()),
-			execution: JSON.parse(execution.toString()),
-			history: JSON.parse(history.toString())
+			definition,
+			execution,
+			history
 		}
 	};
 };
