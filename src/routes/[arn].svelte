@@ -17,7 +17,9 @@
 		return {
 			props: {
 				description: result.definition,
-				executions: result.executions.executions
+				executions: result.executions.executions.sort((a, b) =>
+					b.startDate.localeCompare(a.startDate)
+				)
 			}
 		};
 	};
