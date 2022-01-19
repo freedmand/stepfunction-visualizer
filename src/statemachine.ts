@@ -56,7 +56,7 @@ interface BaseState {
 	Next?: string;
 }
 
-export type State = PassState | TaskState | ParallelState | MapState | ChoiceState;
+export type State = PassState | TaskState | ParallelState | MapState | ChoiceState | FailState | SucceedState | WaitState;
 
 export interface PassState extends BaseState {
 	Type: 'Pass';
@@ -104,6 +104,24 @@ export interface ChoiceState extends BaseState {
 	Default?: string;
 }
 
+export interface FailState extends BaseState {
+	Type: 'Fail';
+	Cause?: string;
+	Error?: string;
+}
+
+export interface SucceedState extends BaseState {
+	Type: 'Succeed';
+}
+
+export interface WaitState extends BaseState {
+	Type: 'Wait';
+	Seconds?: number;
+	Timestamp?: string;
+	SecondsPath?: string;
+	TimestampPath?: string;
+}
+
 export interface ExecutionHistory {
 	events: ExecutionEvent[];
 }
@@ -135,7 +153,7 @@ export interface ExecutionStarted extends BaseExecutionEvent {
 }
 
 export interface StateEntered extends BaseExecutionEvent {
-	type: 'TaskStateEntered' | 'ParallelStateEntered';
+	type: 'TaskStateEntered' | 'ParallelStateEntered' | 'MapStateEntered' | 'ChoiceStateEntered' | 'PassStateEntered' | 'FailStateEntered' | 'SucceedStateEntered' | 'WaitStateEntered';
 	stateEnteredEventDetails: {
 		name: string;
 		input: string;
@@ -165,7 +183,7 @@ export interface LambdaFunctionSucceeded extends BaseExecutionEvent {
 }
 
 export interface StateExited extends BaseExecutionEvent {
-	type: 'TaskStateExited' | 'ParallelStateExited';
+	type: 'TaskStateExited' | 'ParallelStateExited' | 'MapStateExited' | 'ChoiceStateExited' | 'PassStateExited' | 'FailStateExited' | 'SucceedStateExited' | 'WaitStateExited';
 	stateExitedEventDetails: {
 		name: string;
 		output: string;

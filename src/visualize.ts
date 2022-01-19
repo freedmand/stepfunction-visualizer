@@ -8,6 +8,15 @@ const STATE_FILLS = {
 	indeterminate: 'grey'
 };
 
+const DEFAULT_BRACE = ['[', ']'];
+const BRACES = {
+	Choice: ['([', '])'],
+	Pass: ['((', '))'],
+	Fail: ['[/', '\\]'],
+	Succeed: ['[\\', '/]'],
+	Wait: ['[/', '/]']
+};
+
 class Context {
 	public id = 0;
 	public states: { [id: string]: State } = {};
@@ -42,21 +51,19 @@ ${convertStepFunction(context, stepFunction)}`,
 
 function convertStepFunction(
 	context: Context,
-	stepFunction: StepFunction,
-	type: 'normal' | 'parallel' | 'map' | 'choice' = 'normal'
+	stepFunction: StepFunction
 ): string {
 	const id = context.getId();
 
 	const getId = (stateKey) => `${id}-${stateKey}_`;
 
 	let result = '';
-	const startBrace = type == 'normal' ? ['[', ']'] : type == 'parallel' ? ['{{', '}}'] : type == 'choice' ? ['([', '])'] : ['[', ']'];
 	result += `${getId(stepFunction.StartAt)}\n`;
 	for (const stateKey of Object.keys(stepFunction.States)) {
 		const state = stepFunction.States[stateKey];
 		context.registerState(getId(stateKey), state);
 		result += convertNode(context, getId, stateKey, state);
-		const brace = stepFunction.StartAt == stateKey ? (state.Type == 'Choice' ? ['([', '])'] : startBrace) : ['[', ']'];
+		const brace = BRACES[state.Type] || DEFAULT_BRACE;
 		result += `${getId(stateKey)}${brace[0]}${JSON.stringify(stateKey)}${brace[1]}\n`;
 		if (context.history != null) {
 			const nodeState = context.history.getStatus(stateKey);
@@ -77,23 +84,25 @@ export function convertNode(
 ): string {
 	switch (state.Type) {
 		case 'Pass':
-			return `${getId(stateKey)}[${JSON.stringify(stateKey)}]\n`;
 		case 'Task':
+		case 'Fail':
+		case 'Succeed':
+		case 'Wait':
 			return `${getId(stateKey)}[${JSON.stringify(stateKey)}]\n`;
 		case 'Parallel':
 			return `subgraph ${getId(stateKey)} [${JSON.stringify(stateKey)}]
 direction ${DIRECTION}
-${state.Branches.map((branch) => convertStepFunction(context, branch, 'parallel')).join('\n')}
+${state.Branches.map((branch) => convertStepFunction(context, branch)).join('\n')}
 end\n`;
-		case 'Choice':
-			return `${convertChoice(context, getId, stateKey, state)}\n`;
 		case 'Map':
 			return `subgraph ${getId(stateKey)} [${JSON.stringify(stateKey)}]
 style ${getId(stateKey)} stroke-dasharray: 5 5
 click ${getId(stateKey)} callback	"tooltip"
 direction ${DIRECTION}
-${convertStepFunction(context, state.Iterator, 'map')}
+${convertStepFunction(context, state.Iterator)}
 end\n`;
+		case 'Choice':
+			return `${convertChoice(context, getId, stateKey, state)}\n`;
 	}
 }
 
