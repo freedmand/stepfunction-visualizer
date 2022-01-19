@@ -16,7 +16,7 @@ export interface Details {
  * step
  */
 export class History {
-	constructor(readonly history: ExecutionHistory) {}
+	constructor(readonly history: ExecutionHistory) { }
 
 	getById(id: string): ExecutionEvent | null {
 		// Find an event by id

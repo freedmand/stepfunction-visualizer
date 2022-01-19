@@ -56,7 +56,7 @@ interface BaseState {
 	Next?: string;
 }
 
-export type State = PassState | TaskState | ParallelState | MapState;
+export type State = PassState | TaskState | ParallelState | MapState | ChoiceState;
 
 export interface PassState extends BaseState {
 	Type: 'Pass';
@@ -96,6 +96,14 @@ export interface MapState extends BaseState {
 	Catch?: JSON;
 }
 
+export interface ChoiceState extends BaseState {
+	Type: 'Choice';
+	Choices: {
+		Next: string;
+	}[];
+	Default?: string;
+}
+
 export interface ExecutionHistory {
 	events: ExecutionEvent[];
 }
@@ -112,7 +120,7 @@ export type ExecutionEvent =
 	| LambdaFunctionScheduled
 	| LambdaFunctionStarted
 	| LambdaFunctionSucceeded
-	| TaskStateExited
+	| StateExited
 	| ParallelStateSucceeded
 	| LambdaFunctionFailed
 	| ExecutionFailed;

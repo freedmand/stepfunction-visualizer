@@ -62,33 +62,38 @@
 </table>
 
 <h2>Executions</h2>
-<table>
-	<tr>
-		<th>Name</th>
-		<th>Status</th>
-		<th>Execution ARN</th>
-		<th>Start Date</th>
-		<th>Stop Date</th>
-	</tr>
-	{#each executions as execution}
+
+{#if executions.length == 0}
+	<p>No executions found. Run the step function to create one.</p>
+{:else}
+	<table>
 		<tr>
-			<td>
-				<a href="/{execution.stateMachineArn}/{execution.executionArn}">{execution.name}</a>
-			</td>
-			<td style="color: {STATUS_COLORS[execution.status] || 'black'}">
-				{execution.status}
-			</td>
-			<td>
-				{execution.executionArn}
-			</td>
-			<td>
-				{execution.startDate}
-			</td>
-			<td>
-				{execution.stopDate}
-			</td>
+			<th>Name</th>
+			<th>Status</th>
+			<th>Execution ARN</th>
+			<th>Start Date</th>
+			<th>Stop Date</th>
 		</tr>
-	{/each}
-</table>
+		{#each executions as execution}
+			<tr>
+				<td>
+					<a href="/{execution.stateMachineArn}/{execution.executionArn}">{execution.name}</a>
+				</td>
+				<td style="color: {STATUS_COLORS[execution.status] || 'black'}">
+					{execution.status}
+				</td>
+				<td>
+					{execution.executionArn}
+				</td>
+				<td>
+					{execution.startDate}
+				</td>
+				<td>
+					{execution.stopDate}
+				</td>
+			</tr>
+		{/each}
+	</table>
+{/if}
 
 <StepFunctionVisualization {stepFunction} />
