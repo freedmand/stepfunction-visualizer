@@ -6,6 +6,7 @@
 	import { stepFunctionToMermaid } from './visualize';
 
 	const JSON_INDENT = 2;
+	const PADDING = 5;
 
 	export let stepFunction: StepFunction;
 	export let history: History | null = null;
@@ -74,6 +75,17 @@
 		clearContainer();
 		mermaid.render('mermaid-container', flowchart, (svgCode) => {
 			container.innerHTML = svgCode;
+
+			// Resize SVG to fit
+			const bbox = (container.querySelector('svg > g') as SVGGraphicsElement).getBBox();
+			container
+				.querySelector('svg')
+				.setAttribute(
+					'viewBox',
+					`${bbox.x - PADDING} ${bbox.y - PADDING} ${bbox.width + PADDING * 2} ${
+						bbox.height + PADDING * 2
+					}`
+				);
 
 			// Bind IDs
 			const elements: { stateKey: string; value: State; element: SVGElement }[] = Object.keys(
