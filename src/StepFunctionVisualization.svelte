@@ -125,7 +125,7 @@
 <h2>Definition</h2>
 <table>
 	<tr>
-		<td>
+		<td style="min-width: min(50vw, 420px);">
 			<div bind:this={container} />
 		</td>
 		<td>

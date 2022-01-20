@@ -54,6 +54,7 @@ interface BaseState {
 	Comment?: string;
 	End?: boolean;
 	Next?: string;
+	Catch?: Catcher[];
 }
 
 export type State = PassState | TaskState | ParallelState | MapState | ChoiceState | FailState | SucceedState | WaitState;
@@ -72,7 +73,6 @@ export interface TaskState extends BaseState {
 	ResultSelector?: string;
 	Parameters?: JSON;
 	Retry?: JSON;
-	Catch?: JSON;
 	TimeoutSeconds?: number;
 }
 
@@ -82,7 +82,6 @@ export interface ParallelState extends BaseState {
 	ResultPath?: string;
 	ResultSelector?: string;
 	Retry?: JSON;
-	Catch?: JSON;
 }
 
 export interface MapState extends BaseState {
@@ -93,7 +92,6 @@ export interface MapState extends BaseState {
 	ResultPath?: string;
 	ResultSelector?: string;
 	Retry?: JSON;
-	Catch?: JSON;
 }
 
 export interface ChoiceState extends BaseState {
@@ -120,6 +118,12 @@ export interface WaitState extends BaseState {
 	Timestamp?: string;
 	SecondsPath?: string;
 	TimestampPath?: string;
+}
+
+export interface Catcher {
+	ErrorEquals: string[];
+	Next: string;
+	ResultPath?: string;
 }
 
 export interface ExecutionHistory {

@@ -1,5 +1,5 @@
 import type { History } from './history';
-import type { ChoiceState, State, StepFunction } from './statemachine';
+import type { ChoiceState, State, StepFunction, TaskState } from './statemachine';
 
 const STATE_FILLS = {
 	success: 'lightgreen',
@@ -71,6 +71,12 @@ function convertStepFunction(
 		}
 		if (state.Next != null) {
 			result += `${getId(stateKey)} --> ${getId(state.Next)}\n`;
+		}
+		if (state.Catch != null) {
+			// Handle catcher next states
+			for (const catcher of state.Catch) {
+				result += `${getId(stateKey)} -.-> ${getId(catcher.Next)}\n`;
+			}
 		}
 	}
 	return result;
