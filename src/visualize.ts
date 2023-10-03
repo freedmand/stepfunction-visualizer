@@ -55,7 +55,7 @@ function convertStepFunction(
 ): string {
 	const id = context.getId();
 
-	const getId = (stateKey) => `${id}-${stateKey}_`;
+	const getId = (stateKey) => `${id}-${stateKey.replace(/[ ]/g, "-")}_`;
 
 	let result = '';
 	result += `${getId(stepFunction.StartAt)}\n`;
